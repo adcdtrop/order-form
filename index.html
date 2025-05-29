@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Order Form</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 10px;
+      max-width: 1200px;
+      margin: auto;
+      overflow-x: hidden;
+    }
+    
+    h2 {
+      text-align: center;
+      color: #007BFF;
+      margin-bottom: 30px;
+      font-size: 1.5rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) auto auto;
+      gap: 10px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      width: 100%;
+      max-width: 100%;
+      align-items: end;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    
+    .form-group label {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      color: #555;
+    }
+    
+    .form-group select,
+    .form-group input {
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      min-width: 0;
+      height: 40px;
+    }
+    
+    .form-group input[readonly] {
+      background: #eef5ff;
+      color: #007BFF;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .delete-btn {
+      background-color: #ffa500;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      padding: 8px;
+      cursor: pointer;
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .delete-btn:hover {
+      background-color: #ff8c00;
+    }
+    
+    .btn,
+    .submit-btn {
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      max-width: 200px;
+    }
+    
+    .btn {
+      background-color: #007BFF;
+      color: white;
+      margin-bottom: 20px;
+    }
+    
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    
+    .submit-btn {
+      background-color: #ffa500;
+      color: white;
+      width: 100%;
+      max-width: none;
+      margin-top: 20px;
+    }
+    
+    .submit-btn:hover {
+      background-color: #e69500;
+    }
+    
+    .total-box {
+      font-size: 18px;
+      text-align: center;
+      margin-top: 20px;
+      background: #eef5ff;
+      padding: 15px;
+      border: 2px solid #007BFF;
+      color: #007BFF;
+      border-radius: 8px;
+      word-break: break-word;
+    }
+    
+    .customer-name {
+      margin-bottom: 20px;
+      position: relative;
+      width: 100%;
+    }
+    
+    /* Loading overlay */
+    .loading-overlay {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007BFF;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: #007BFF;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    /* Monday.com search styles */
+    .search-container {
+      position: relative;
+      width: 100%;
+    }
+    
+    .dropdown-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .dropdown-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      word-break: break-word;
+    }
+    
+    .dropdown-item:hover,
+    .dropdown-item.active {
+      background-color: #f0f0f0;
+    }
+    
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+    
+    .no-results {
+      padding: 10px 12px;
+      color: #666;
+      font-style: italic;
+    }
+    
+    .customer-status {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #666;
+    }
+    
+    .customer-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 5px;
+      font-size: 14px;
+      display: none;
+      word-break: break-word;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px 10px;
+        align-items: stretch;
+      }
+      
+      .form-group {
+        width: 100%;
+      }
+      
+      .form-group label {
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      
+      .form-group select,
+      .form-group input {
+        padding: 12px 8px;
+        font-size: 16px;
+        min-height: 44px;
+        height: 44px;
+      }
+      
+      .delete-btn {
+        padding: 12px;
+        font-size: 16px;
+        min-height: 44px;
+        height: 44px;
+        margin-top: 10px;
+      }
+      
+      .btn {
+        max-width: none;
+        padding: 15px 20px;
+        font-size: 18px;
+      }
+      
+      .submit-btn {
+        padding: 15px 20px;
+        font-size: 18px;
+        margin-top: 30px;
+      }
+      
+      .total-box {
+        font-size: 20px;
+        padding: 20px 15px;
+        margin-top: 30px;
+      }
+      
+      .dropdown-list {
+        max-height: 150px;
+      }
+      
+      .dropdown-item {
+        padding: 15px 12px;
+        font-size: 16px;
+      }
+      
+      .customer-warning {
+        font-size: 15px;
+        padding: 12px;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 480px) {
+      body {
+        padding: 3px;
+      }
+      
+      h2 {
+        font-size: 1.2rem;
+      }
+      
+      .form-row {
+        padding: 12px 8px;
+        gap: 12px;
+      }
+      
+      .form-group select,
+      .form-group input {
+        padding: 10px 6px;
+        font-size: 16px;
+      }
+      
+      .total-box {
+        font-size: 18px;
+        padding: 15px 10px;
+      }
+    }
+    
+    /* Landscape phone orientation */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .form-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      
+      .delete-btn {
+        grid-column: span 2;
+        margin-top: 10px;
+      }
+    }
+    
+    /* Very wide screens - prevent stretching */
+    @media (min-width: 1200px) {
+      .form-row {
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading customers...</div>
+  </div>
+
+  <h2>Product Order Form</h2>
+  <form id="orderForm" onsubmit="submitOrder(); return false;">
+    <div class="form-group customer-name">
+      <label for="customerName">Customer Name</label>
+      <div class="search-container">
+        <input type="text" id="customerName" name="customerName" placeholder="Search for customer..." required autocomplete="off" />
+        <div id="customerDropdownList" class="dropdown-list"></div>
+      </div>
+      <div id="customerStatus" class="customer-status">Loading customers...</div>
+      <div id="customerWarning" class="customer-warning">
+        ⚠️ Customer not found in the system. Select from Dropdown
+      </div>
+    </div>
+    <div id="order-form"></div>
+    <button class="btn" type="button" onclick="addProductRow()">+ Add Product</button>
+    <div class="total-box">Grand Total: $<span id="grandTotal">0.00</span></div>
+    <button class="submit-btn" type="submit">Submit Order</button>
+  </form>
+
+  <script>
+    const WEBHOOK_URL = "https://hook.us2.make.com/675ao9xc3l8a0fwiqlb9iyq7xrh3r81j"; // Replace with your actual webhook URL
+    
+    // Monday.com Configuration
+    const MONDAY_API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjUxOTIxNzk3MCwiYWFpIjoxMSwidWlkIjo3NjYxMTgyNiwiaWFkIjoiMjAyNS0wNS0yOVQwMTozNDoxOS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6Mjk0NjY1NjMsInJnbiI6InVzZTEifQ.YusQcMMhB4qL_QYTIhVVOzaaoN5i2ReecYQSDvNSoLU';
+    const BOARD_ID = '9197029495';
+    
+    // Global variables for customer search
+    let allCustomers = [];
+    let filteredCustomers = [];
+    let selectedCustomerId = null;
+    
+    const data = {
+      "Ambient": {
+        "10 oz. 24pk": { price: 19, flavors: ["OJ", "AP", "RR", "CRAN"] },
+        "15.2 oz. 12pk": { price: 16, flavors: ["OJ", "AP", "RR", "CRAN", "GPE", "OP", "SK"] },
+        "32 oz 12pk": { price: 31, flavors: ["OJ", "AP", "RR", "CRAN"] }
+      },
+      "Refreshers": {
+        "11 oz. Refreshers & PP 12pk": { price: 19, flavors: ["OJ", "CAL", "HS", "TP", "AP", "CRAN", "GPE", "LEM", "RL", "PM", "FP"] },
+        "46oz Refreshers 6pk": { price: 16, flavors: ["LEM", "FP", "W/M", "PM", "SP", "TP", "PP", "CP", "SL", "S/LIM"] },
+        "46oz Essentials 6pk": { price: 18, flavors: ["OJ", "HS", "OM", "Spice"] }
+      },
+      "Pure Premium": {
+        "14oz Pint PP 12pk": { price: 19, flavors: ["OJ", "HS", "CAL"] },
+        "46oz PP 6pk": { price: 22, flavors: ["OJ", "HS", "GRV", "CAL", "RR", "OP", "LA", "light"] },
+        "89 oz. PP": { price: 42, flavors: ["OJ", "HS", "CAL"] }
+      },
+      "Twisters": {
+        "11oz Twister 12pk": { price: 19, flavors: ["FR", "OBS", "SK", "CB", "BL"] },
+        "59oz Twister 8pk": { price: 14, flavors: ["TRP", "FP", "BB", "LEM", "OR", "PCH", "GRP"] }
+      },
+      "Naked": {
+        "Naked 15.2oz 8pk": { price: 22, flavors: ["PC", "BLU", "GR", "MANG", "STR/BAN", "BB", "RB"] },
+        "Naked 64 oz. 6pk": { price: 42, flavors: ["MM", "GM", "BM", "SB", "PC", "RB", "ORCAR"] }
+      },
+      "Kevita": {
+        "Kevita 15.2oz 6pk": { price: 15, flavors: ["PP", "GIMG", "RABLE", "CH"] }
+      }
+    };
+
+    let rowCount = 0;
+    let activeRows = new Set();
+
+    // Monday.com customer search functions
+    function updateCustomerStatus(message, type = 'loading') {
+      const statusEl = document.getElementById('customerStatus');
+      statusEl.textContent = message;
+      statusEl.style.color = type === 'error' ? '#c62828' : type === 'success' ? '#2e7d32' : '#666';
+    }
+
+    function showCustomerWarning(show = true) {
+      const warningEl = document.getElementById('customerWarning');
+      warningEl.style.display = show ? 'block' : 'none';
+    }
+
+    function isValidCustomer(customerName) {
+      return allCustomers.some(customer => customer.name === customerName);
+    }
+
+    function getCustomerById(customerName) {
+      return allCustomers.find(customer => customer.name === customerName);
+    }
+
+    function hideLoadingOverlay() {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.style.display = 'none';
+    }
+
+    function showLoadingOverlay(text = 'Loading...') {
+      const overlay = document.getElementById('loadingOverlay');
+      const textEl = overlay.querySelector('.loading-text');
+      textEl.textContent = text;
+      overlay.style.display = 'flex';
+    }
+
+    async function fetchAllMondayCustomers() {
+      updateCustomerStatus('Loading customers...', 'loading');
+      
+      try {
+        if (!MONDAY_API_KEY || !BOARD_ID) {
+          throw new Error('API Key or Board ID is missing');
+        }
+
+        let allItems = [];
+        let cursor = null;
+        let pageCount = 0;
+        const itemsPerPage = 100;
+
+        do {
+          pageCount++;
+          const query = `{
+            boards(ids: ${BOARD_ID}) {
+              id
+              name
+              items_page(limit: ${itemsPerPage}${cursor ? `, cursor: "${cursor}"` : ''}) {
+                cursor
+                items {
+                  id
+                  name
+                }
+              }
+            }
+          }`;
+
+          const response = await fetch('https://api.monday.com/v2', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': MONDAY_API_KEY
+            },
+            body: JSON.stringify({ query })
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          if (data.errors) {
+            throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+          }
+
+          if (!data.data || !data.data.boards || data.data.boards.length === 0) {
+            throw new Error('No boards found - check your Board ID and permissions');
+          }
+
+          const board = data.data.boards[0];
+          const itemsPage = board.items_page;
+
+          if (itemsPage && itemsPage.items) {
+            allItems = allItems.concat(itemsPage.items);
+            cursor = itemsPage.cursor;
+            console.log(`Page ${pageCount}: Found ${itemsPage.items.length} customers, cursor: ${cursor}`);
+          } else {
+            break;
+          }
+
+          if (pageCount > 100) {
+            console.warn('Reached maximum page limit (100), stopping pagination');
+            break;
+          }
+
+        } while (cursor);
+
+        console.log(`Total customers retrieved: ${allItems.length}`);
+        return allItems;
+
+      } catch (error) {
+        console.error('Error fetching Monday.com customers:', error);
+        updateCustomerStatus(`Error: ${error.message}`, 'error');
+        return [];
+      }
+    }
+
+    function filterCustomers(searchTerm) {
+      if (!searchTerm) {
+        filteredCustomers = [];
+        return;
+      }
+
+      const term = searchTerm.toLowerCase();
+      filteredCustomers = allCustomers.filter(customer => 
+        customer.name.toLowerCase().includes(term)
+      ).slice(0, 50);
+    }
+
+    function displayCustomerDropdown() {
+      const dropdown = document.getElementById('customerDropdownList');
+      const input = document.getElementById('customerName');
+
+      if (filteredCustomers.length === 0 && input.value) {
+        dropdown.innerHTML = '<div class="no-results">No customers found</div>';
+        dropdown.style.display = 'block';
+        return;
+      }
+
+      if (filteredCustomers.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      dropdown.innerHTML = filteredCustomers.map(customer => 
+        `<div class="dropdown-item" data-value="${customer.name}" data-id="${customer.id}">${customer.name}</div>`
+      ).join('');
+
+      dropdown.style.display = 'block';
+    }
+
+    function hideCustomerDropdown() {
+      setTimeout(() => {
+        document.getElementById('customerDropdownList').style.display = 'none';
+      }, 150);
+    }
+
+    async function initializeCustomerDropdown() {
+      try {
+        allCustomers = await fetchAllMondayCustomers();
+
+        if (allCustomers.length === 0) {
+          updateCustomerStatus('No customers found', 'error');
+          hideLoadingOverlay();
+          return;
+        }
+
+        updateCustomerStatus(`${allCustomers.length} customers loaded`, 'success');
+        console.log(`Initialized with ${allCustomers.length} customers`);
+        
+        // Hide loading overlay after customers are loaded
+        hideLoadingOverlay();
+
+      } catch (error) {
+        console.error('Error initializing customer dropdown:', error);
+        updateCustomerStatus(`Error: ${error.message}`, 'error');
+        hideLoadingOverlay();
+      }
+    }
+
+    // Product form functions
+    function addProductRow() {
+      rowCount++;
+      const rowId = `row-${rowCount}`;
+      activeRows.add(rowId);
+      const row = document.createElement('div');
+      row.className = 'form-row';
+      row.id = rowId;
+      row.innerHTML = `
+        <div class="form-group">
+          <label>Category</label>
+          <select onchange="populateSizes('${rowId}', this.value)">
+            <option value="">Select Category</option>
+            ${Object.keys(data).map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Size</label>
+          <select id="${rowId}-size" onchange="populateFlavors('${rowId}', this.value)">
+            <option value="">Select Size</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Flavor</label>
+          <select id="${rowId}-flavor" onchange="updateTotal()">
+            <option value="">Select Flavor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qty</label>
+          <input id="${rowId}-qty" type="number" min="1" value="1" onchange="updateTotal()" />
+        </div>
+        <div class="form-group">
+          <label>Total</label>
+          <input id="${rowId}-total" type="text" readonly placeholder="$0.00" />
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="delete-btn" onclick="deleteRow('${rowId}')">×</button>
+        </div>
+      `;
+      document.getElementById('order-form').appendChild(row);
+      updateDeleteButtons();
+      updateTotal();
+    }
+
+    function populateSizes(rowId, category) {
+      const sizeField = document.getElementById(`${rowId}-size`);
+      const flavorField = document.getElementById(`${rowId}-flavor`);
+      const totalField = document.getElementById(`${rowId}-total`);
+      sizeField.innerHTML = '<option value="">Select Size</option>';
+      flavorField.innerHTML = '<option value="">Select Flavor</option>';
+      totalField.value = '';
+      if (category && data[category]) {
+        Object.keys(data[category]).forEach(size => {
+          sizeField.innerHTML += `<option value="${size}">${size}</option>`;
+        });
+      }
+      updateTotal();
+    }
+
+    function populateFlavors(rowId, size) {
+      const category = document.querySelector(`#${rowId} select`).value;
+      const flavorField = document.getElementById(`${rowId}-flavor`);
+      const totalField = document.getElementById(`${rowId}-total`);
+      flavorField.innerHTML = '<option value="">Select Flavor</option>';
+      totalField.value = '';
+      if (category && size && data[category][size]) {
+        data[category][size].flavors.forEach(f => {
+          flavorField.innerHTML += `<option value="${f}">${f}</option>`;
+        });
+      }
+      updateTotal();
+    }
+
+    function updateDeleteButtons() {
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.style.display = activeRows.size > 1 ? 'flex' : 'none';
+      });
+    }
+
+    function deleteRow(rowId) {
+      if (activeRows.size > 1) {
+        document.getElementById(rowId).remove();
+        activeRows.delete(rowId);
+        updateDeleteButtons();
+        updateTotal();
+      }
+    }
+
+    function updateTotal() {
+      let grandTotal = 0;
+      activeRows.forEach(rowId => {
+        const qty = parseInt(document.getElementById(`${rowId}-qty`)?.value || 0);
+        const category = document.querySelector(`#${rowId} select`)?.value;
+        const size = document.getElementById(`${rowId}-size`)?.value;
+        let unitPrice = 0;
+        if (category && size && data[category] && data[category][size]) {
+          unitPrice = data[category][size].price;
+        }
+        const rowTotal = qty * unitPrice;
+        document.getElementById(`${rowId}-total`).value = `$${rowTotal.toFixed(2)}`;
+        grandTotal += rowTotal;
+      });
+      document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+    }
+
+    function submitOrder() {
+      const customerName = document.getElementById("customerName").value;
+      
+      // Check if customer is valid
+      if (!isValidCustomer(customerName)) {
+        alert("Please select a valid customer from the dropdown list.");
+        showCustomerWarning(true);
+        return;
+      }
+      
+      // Get customer details
+      const customer = getCustomerById(customerName);
+      
+      const orders = [];
+      let isValid = true;
+      activeRows.forEach(rowId => {
+        const category = document.querySelector(`#${rowId} select`)?.value;
+        const size = document.getElementById(`${rowId}-size`)?.value;
+        const flavor = document.getElementById(`${rowId}-flavor`)?.value;
+        const qty = parseInt(document.getElementById(`${rowId}-qty`)?.value || 0);
+        if (category && size && flavor && qty > 0) {
+          const unitPrice = data[category][size].price;
+          orders.push({ category, size, flavor, quantity: qty, unitPrice, totalPrice: qty * unitPrice });
+        } else {
+          isValid = false;
+        }
+      });
+      
+      if (!isValid || orders.length === 0) {
+        alert("Please complete all selections.");
+        return;
+      }
+      
+      const grandTotal = parseFloat(document.getElementById('grandTotal').textContent);
+      const payload = {
+        customerId: customer.id,
+        customerName: customer.name,
+        orders,
+        grandTotal,
+        submittedAt: new Date().toISOString()
+      };
+      
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Order submitted successfully!");
+        } else {
+          alert("Submission failed. Please try again.");
+        }
+      })
+      .catch(() => alert("Error connecting to webhook."));
+    }
+
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Show loading overlay
+      showLoadingOverlay('Loading customers...');
+      
+      // Initialize customer dropdown first
+      await initializeCustomerDropdown();
+
+      const customerInput = document.getElementById('customerName');
+      const customerDropdown = document.getElementById('customerDropdownList');
+
+      // Customer search functionality
+      customerInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value;
+        console.log('User searching for customer:', searchTerm);
+        
+        // Hide warning when user starts typing
+        showCustomerWarning(false);
+        selectedCustomerId = null;
+        
+        filterCustomers(searchTerm);
+        displayCustomerDropdown();
+        
+        // Show warning if customer doesn't match any from the list
+        if (searchTerm && !isValidCustomer(searchTerm)) {
+          showCustomerWarning(true);
+        }
+      });
+
+      // Handle customer dropdown item selection
+      customerDropdown.addEventListener('click', function(e) {
+        if (e.target.classList.contains('dropdown-item')) {
+          customerInput.value = e.target.dataset.value;
+          selectedCustomerId = e.target.dataset.id;
+          customerDropdown.style.display = 'none';
+          showCustomerWarning(false);
+          console.log('Selected customer:', e.target.dataset.value, 'ID:', selectedCustomerId);
+        }
+      });
+
+      // Hide dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+          customerDropdown.style.display = 'none';
+        }
+      });
+
+      // Show dropdown when input is focused (if there's a value)
+      customerInput.addEventListener('focus', function(e) {
+        if (e.target.value) {
+          filterCustomers(e.target.value);
+          displayCustomerDropdown();
+        }
+      });
+
+      // Hide dropdown on blur
+      customerInput.addEventListener('blur', hideCustomerDropdown);
+
+      // Handle keyboard navigation for customer dropdown
+      customerInput.addEventListener('keydown', function(e) {
+        const items = customerDropdown.querySelectorAll('.dropdown-item');
+        let activeIndex = Array.from(items).findIndex(item => item.classList.contains('active'));
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (activeIndex < items.length - 1) {
+            if (activeIndex >= 0) items[activeIndex].classList.remove('active');
+            items[activeIndex + 1].classList.add('active');
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (activeIndex > 0) {
+            items[activeIndex].classList.remove('active');
+            items[activeIndex - 1].classList.add('active');
+          }
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIndex >= 0) {
+            customerInput.value = items[activeIndex].dataset.value;
+            selectedCustomerId = items[activeIndex].dataset.id;
+            customerDropdown.style.display = 'none';
+            showCustomerWarning(false);
+          }
+        } else if (e.key === 'Escape') {
+          customerDropdown.style.display = 'none';
+        }
+      });
+
+      // Initialize with one product row after customers are loaded
+      addProductRow();
+    });
+  </script>
+</body>
+</html>
