@@ -27,17 +27,19 @@
     }
     
     .form-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr) auto auto;
-      gap: 10px;
-      padding: 15px;
       background: #f9f9f9;
       border-radius: 8px;
       margin-bottom: 15px;
       border: 1px solid #ddd;
-      width: 100%;
-      max-width: 100%;
+      padding: 15px;
+    }
+    
+    .product-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 15px;
       align-items: end;
+      margin-bottom: 20px;
     }
     
     .form-group {
@@ -70,6 +72,96 @@
       color: #007BFF;
       font-weight: bold;
       text-align: center;
+    }
+    
+    .flavors-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #e0e0e0;
+    }
+    
+    .flavors-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #007BFF;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    
+    .flavor-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .flavor-select {
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      height: 36px;
+    }
+    
+    .quantity-input {
+      width: 80px;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      height: 36px;
+      text-align: center;
+    }
+    
+    .remove-flavor-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 8px 12px;
+      cursor: pointer;
+      height: 36px;
+      min-width: 60px;
+    }
+    
+    .remove-flavor-btn:hover {
+      background-color: #c82333;
+    }
+    
+    .add-flavor-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 8px 15px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    .add-flavor-btn:hover {
+      background-color: #218838;
+    }
+    
+    .add-flavor-btn:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+    
+    .product-total {
+      text-align: right;
+      font-size: 16px;
+      font-weight: bold;
+      color: #007BFF;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e0e0e0;
     }
     
     .delete-btn {
@@ -239,6 +331,25 @@
       word-break: break-word;
     }
     
+    /* Tablet styles */
+    @media (max-width: 1024px) {
+      body {
+        padding: 8px;
+      }
+      
+      .product-header {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      
+      .delete-btn {
+        grid-column: span 2;
+        margin-top: 10px;
+        max-width: 150px;
+        justify-self: center;
+      }
+    }
+    
     /* Mobile styles */
     @media (max-width: 768px) {
       body {
@@ -251,14 +362,30 @@
       }
       
       .form-row {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 15px 10px;
-        align-items: stretch;
+        padding: 12px;
       }
       
-      .form-group {
+      .product-header {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .flavor-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: center;
+      }
+      
+      .quantity-input {
         width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+      }
+      
+      .remove-flavor-btn {
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
       }
       
       .form-group label {
@@ -280,6 +407,8 @@
         min-height: 44px;
         height: 44px;
         margin-top: 10px;
+        max-width: none;
+        width: 100%;
       }
       
       .btn {
@@ -326,32 +455,16 @@
       }
       
       .form-row {
-        padding: 12px 8px;
-        gap: 12px;
-      }
-      
-      .form-group select,
-      .form-group input {
-        padding: 10px 6px;
-        font-size: 16px;
+        padding: 10px 8px;
       }
       
       .total-box {
         font-size: 18px;
         padding: 15px 10px;
       }
-    }
-    
-    /* Landscape phone orientation */
-    @media (max-width: 768px) and (orientation: landscape) {
-      .form-row {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
       
-      .delete-btn {
-        grid-column: span 2;
-        margin-top: 10px;
+      .flavor-row {
+        padding: 8px;
       }
     }
     
@@ -373,7 +486,7 @@
   </div>
 
   <h2>Product Order Form</h2>
-  <form id="orderForm" onsubmit="submitOrder(); return false;">
+  <form id="orderForm" onsubmit="submitOrder(event)">
     <div class="form-group customer-name">
       <label for="customerName">Customer Name</label>
       <div class="search-container">
@@ -388,6 +501,7 @@
     <div id="order-form"></div>
     <button class="btn" type="button" onclick="addProductRow()">+ Add Product</button>
     <div class="total-box">Grand Total: $<span id="grandTotal">0.00</span></div>
+    <div id="validationErrors" class="validation-errors" style="display: none;"></div>
     <button class="submit-btn" type="submit">Submit Order</button>
   </form>
 
@@ -434,6 +548,165 @@
 
     let rowCount = 0;
     let activeRows = new Set();
+    let flavorCount = {};
+
+    // Validation functions
+    function showValidationErrors(errors) {
+      const errorDiv = document.getElementById('validationErrors');
+      if (errors.length > 0) {
+        errorDiv.innerHTML = `
+          <div style="background-color: #ffebee; border: 1px solid #f44336; border-radius: 4px; padding: 15px; margin: 15px 0; color: #c62828;">
+            <strong>⚠️ Please fix the following issues before submitting:</strong>
+            <ul style="margin: 10px 0 0 20px;">
+              ${errors.map(error => `<li>${error}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        errorDiv.style.display = 'block';
+        
+        // Scroll to validation errors
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        return false;
+      } else {
+        errorDiv.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateForm() {
+      const errors = [];
+      
+      // Validate customer name
+      const customerName = document.getElementById('customerName').value.trim();
+      if (!customerName) {
+        errors.push('Customer name is required');
+      } else if (!isValidCustomer(customerName)) {
+        errors.push('Please select a valid customer from the dropdown list');
+      }
+      
+      // Check if there are any product rows
+      if (activeRows.size === 0) {
+        errors.push('At least one product must be added');
+        return showValidationErrors(errors);
+      }
+      
+      let hasValidProducts = false;
+      let productIndex = 1;
+      
+      // Validate each product row
+      activeRows.forEach(rowId => {
+        const category = document.querySelector(`#${rowId} select`)?.value;
+        const size = document.getElementById(`${rowId}-size`)?.value;
+        
+        // Check if category is selected
+        if (!category) {
+          errors.push(`Product ${productIndex}: Category must be selected`);
+        }
+        
+        // Check if size is selected
+        if (!size) {
+          errors.push(`Product ${productIndex}: Size must be selected`);
+        }
+        
+        // If both category and size are selected, validate flavors
+        if (category && size && data[category][size]) {
+          const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+          let hasValidFlavors = false;
+          let flavorIndex = 1;
+          
+          if (flavorRows.length === 0) {
+            errors.push(`Product ${productIndex}: At least one flavor must be added`);
+          } else {
+            flavorRows.forEach(row => {
+              const flavorSelect = row.querySelector('.flavor-select');
+              const quantityInput = row.querySelector('.quantity-input');
+              const flavor = flavorSelect.value;
+              const quantity = parseInt(quantityInput.value) || 0;
+              
+              // Check if flavor is selected
+              if (!flavor) {
+                errors.push(`Product ${productIndex}, Flavor ${flavorIndex}: Flavor must be selected`);
+              }
+              
+              // Check if quantity is valid
+              if (quantity <= 0) {
+                errors.push(`Product ${productIndex}, Flavor ${flavorIndex}: Quantity must be greater than 0`);
+              }
+              
+              // If both flavor and quantity are valid, mark as having valid flavors
+              if (flavor && quantity > 0) {
+                hasValidFlavors = true;
+                hasValidProducts = true;
+              }
+              
+              flavorIndex++;
+            });
+            
+            if (!hasValidFlavors) {
+              errors.push(`Product ${productIndex}: At least one flavor with valid quantity is required`);
+            }
+          }
+        }
+        
+        productIndex++;
+      });
+      
+      // Check if there are any valid products
+      if (!hasValidProducts && errors.length === 0) {
+        errors.push('At least one complete product (with category, size, flavor, and quantity) is required');
+      }
+      
+      // Check if grand total is greater than 0
+      const grandTotal = parseFloat(document.getElementById('grandTotal').textContent);
+      if (grandTotal <= 0) {
+        errors.push('Order total must be greater than $0.00');
+      }
+      
+      return showValidationErrors(errors);
+    }
+
+    function highlightIncompleteFields() {
+      // Reset all field styles first
+      document.querySelectorAll('input, select').forEach(field => {
+        field.style.borderColor = '#ddd';
+      });
+      
+      // Highlight incomplete customer field
+      const customerName = document.getElementById('customerName').value.trim();
+      if (!customerName || !isValidCustomer(customerName)) {
+        document.getElementById('customerName').style.borderColor = '#f44336';
+      }
+      
+      // Highlight incomplete product fields
+      activeRows.forEach(rowId => {
+        const categorySelect = document.querySelector(`#${rowId} select`);
+        const sizeSelect = document.getElementById(`${rowId}-size`);
+        
+        if (!categorySelect.value) {
+          categorySelect.style.borderColor = '#f44336';
+        }
+        
+        if (!sizeSelect.value) {
+          sizeSelect.style.borderColor = '#f44336';
+        }
+        
+        // Highlight incomplete flavor fields
+        const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+        flavorRows.forEach(row => {
+          const flavorSelect = row.querySelector('.flavor-select');
+          const quantityInput = row.querySelector('.quantity-input');
+          
+          if (!flavorSelect.value) {
+            flavorSelect.style.borderColor = '#f44336';
+          }
+          
+          if (!quantityInput.value || parseInt(quantityInput.value) <= 0) {
+            quantityInput.style.borderColor = '#f44336';
+          }
+        });
+      });
+    }
 
     // Monday.com customer search functions
     function updateCustomerStatus(message, type = 'loading') {
@@ -615,54 +888,62 @@
       rowCount++;
       const rowId = `row-${rowCount}`;
       activeRows.add(rowId);
+      flavorCount[rowId] = 1;
+      
       const row = document.createElement('div');
       row.className = 'form-row';
       row.id = rowId;
       row.innerHTML = `
-        <div class="form-group">
-          <label>Category</label>
-          <select onchange="populateSizes('${rowId}', this.value)">
-            <option value="">Select Category</option>
-            ${Object.keys(data).map(cat => `<option value="${cat}">${cat}</option>`).join('')}
-          </select>
+        <div class="product-header">
+          <div class="form-group">
+            <label>Category</label>
+            <select onchange="populateSizes('${rowId}', this.value); clearValidationErrors();">
+              <option value="">Select Category</option>
+              ${Object.keys(data).map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Size</label>
+            <select id="${rowId}-size" onchange="populateFlavors('${rowId}', this.value); clearValidationErrors();">
+              <option value="">Select Size</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="delete-btn" type="button" onclick="deleteRow('${rowId}')">×</button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Size</label>
-          <select id="${rowId}-size" onchange="populateFlavors('${rowId}', this.value)">
-            <option value="">Select Size</option>
-          </select>
+        <div class="flavors-section" id="${rowId}-flavors-section" style="display: none;">
+          <div class="flavors-title">Select Flavors and Quantities</div>
+          <div id="${rowId}-flavors-list"></div>
+          <button type="button" class="add-flavor-btn" id="${rowId}-add-flavor" onclick="addFlavorRow('${rowId}')" disabled>+ Add More</button>
         </div>
-        <div class="form-group">
-          <label>Flavor</label>
-          <select id="${rowId}-flavor" onchange="updateTotal()">
-            <option value="">Select Flavor</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Qty</label>
-          <input id="${rowId}-qty" type="number" min="1" value="1" onchange="updateTotal()" />
-        </div>
-        <div class="form-group">
-          <label>Total</label>
-          <input id="${rowId}-total" type="text" readonly placeholder="$0.00" />
-        </div>
-        <div class="form-group">
-          <label>&nbsp;</label>
-          <button class="delete-btn" onclick="deleteRow('${rowId}')">×</button>
-        </div>
+        <div class="product-total" id="${rowId}-total">Product Total: $0.00</div>
       `;
       document.getElementById('order-form').appendChild(row);
       updateDeleteButtons();
       updateTotal();
     }
 
+    function clearValidationErrors() {
+      const errorDiv = document.getElementById('validationErrors');
+      errorDiv.style.display = 'none';
+      
+      // Reset field border colors
+      document.querySelectorAll('input, select').forEach(field => {
+        if (field.style.borderColor === 'rgb(244, 67, 54)') {
+          field.style.borderColor = '#ddd';
+        }
+      });
+    }
+
     function populateSizes(rowId, category) {
       const sizeField = document.getElementById(`${rowId}-size`);
-      const flavorField = document.getElementById(`${rowId}-flavor`);
-      const totalField = document.getElementById(`${rowId}-total`);
+      const flavorsSection = document.getElementById(`${rowId}-flavors-section`);
+      
       sizeField.innerHTML = '<option value="">Select Size</option>';
-      flavorField.innerHTML = '<option value="">Select Flavor</option>';
-      totalField.value = '';
+      flavorsSection.style.display = 'none';
+      
       if (category && data[category]) {
         Object.keys(data[category]).forEach(size => {
           sizeField.innerHTML += `<option value="${size}">${size}</option>`;
@@ -673,16 +954,70 @@
 
     function populateFlavors(rowId, size) {
       const category = document.querySelector(`#${rowId} select`).value;
-      const flavorField = document.getElementById(`${rowId}-flavor`);
-      const totalField = document.getElementById(`${rowId}-total`);
-      flavorField.innerHTML = '<option value="">Select Flavor</option>';
-      totalField.value = '';
+      const flavorsSection = document.getElementById(`${rowId}-flavors-section`);
+      const flavorsList = document.getElementById(`${rowId}-flavors-list`);
+      const addButton = document.getElementById(`${rowId}-add-flavor`);
+      
       if (category && size && data[category][size]) {
-        data[category][size].flavors.forEach(f => {
-          flavorField.innerHTML += `<option value="${f}">${f}</option>`;
-        });
+        flavorsSection.style.display = 'block';
+        flavorsList.innerHTML = '';
+        flavorCount[rowId] = 1;
+        
+        // Add first flavor row
+        addFlavorRowInternal(rowId);
+        addButton.disabled = false;
+      } else {
+        flavorsSection.style.display = 'none';
+        addButton.disabled = true;
       }
       updateTotal();
+    }
+
+    function addFlavorRow(rowId) {
+      flavorCount[rowId]++;
+      addFlavorRowInternal(rowId);
+    }
+
+    function addFlavorRowInternal(rowId) {
+      const category = document.querySelector(`#${rowId} select`).value;
+      const size = document.getElementById(`${rowId}-size`).value;
+      const flavorsList = document.getElementById(`${rowId}-flavors-list`);
+      const flavorId = `${rowId}-flavor-${flavorCount[rowId]}`;
+      
+      if (!category || !size || !data[category][size]) return;
+      
+      const availableFlavors = data[category][size].flavors;
+      const flavorRow = document.createElement('div');
+      flavorRow.className = 'flavor-row';
+      flavorRow.id = flavorId;
+      flavorRow.innerHTML = `
+        <select class="flavor-select" onchange="updateTotal(); clearValidationErrors();">
+          <option value="">Select Flavor</option>
+          ${availableFlavors.map(flavor => `<option value="${flavor}">${flavor}</option>`).join('')}
+        </select>
+        <input type="number" class="quantity-input" min="1" value="1" onchange="updateTotal(); clearValidationErrors();" placeholder="Qty" />
+        <button type="button" class="remove-flavor-btn" onclick="removeFlavorRow('${flavorId}', '${rowId}')">Remove</button>
+      `;
+      
+      flavorsList.appendChild(flavorRow);
+      updateRemoveFlavorButtons(rowId);
+    }
+
+    function removeFlavorRow(flavorId, rowId) {
+      const flavorRow = document.getElementById(flavorId);
+      if (flavorRow) {
+        flavorRow.remove();
+        updateRemoveFlavorButtons(rowId);
+        updateTotal();
+      }
+    }
+
+    function updateRemoveFlavorButtons(rowId) {
+      const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+      flavorRows.forEach(row => {
+        const removeBtn = row.querySelector('.remove-flavor-btn');
+        removeBtn.style.display = flavorRows.length > 1 ? 'block' : 'none';
+      });
     }
 
     function updateDeleteButtons() {
@@ -695,177 +1030,242 @@
       if (activeRows.size > 1) {
         document.getElementById(rowId).remove();
         activeRows.delete(rowId);
+        delete flavorCount[rowId];
         updateDeleteButtons();
         updateTotal();
+        clearValidationErrors();
       }
     }
 
     function updateTotal() {
       let grandTotal = 0;
+      
       activeRows.forEach(rowId => {
-        const qty = parseInt(document.getElementById(`${rowId}-qty`)?.value || 0);
         const category = document.querySelector(`#${rowId} select`)?.value;
         const size = document.getElementById(`${rowId}-size`)?.value;
-        let unitPrice = 0;
-        if (category && size && data[category] && data[category][size]) {
-          unitPrice = data[category][size].price;
+        let productTotal = 0;
+        
+        if (category && size && data[category][size]) {
+          const unitPrice = data[category][size].price;
+          const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+          
+          flavorRows.forEach(row => {
+            const flavorSelect = row.querySelector('.flavor-select');
+            const quantityInput = row.querySelector('.quantity-input');
+            const flavor = flavorSelect.value;
+            const quantity = parseInt(quantityInput.value) || 0;
+            
+            if (flavor && quantity > 0) {
+              productTotal += quantity * unitPrice;
+            }
+          });
         }
-        const rowTotal = qty * unitPrice;
-        document.getElementById(`${rowId}-total`).value = `$${rowTotal.toFixed(2)}`;
-        grandTotal += rowTotal;
+        
+        const productTotalEl = document.getElementById(`${rowId}-total`);
+        if (productTotalEl) {
+          productTotalEl.textContent = `Product Total: $${productTotal.toFixed(2)}`;
+        }
+        
+        grandTotal += productTotal;
       });
+      
       document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
     }
 
-    function submitOrder() {
-      const customerName = document.getElementById("customerName").value;
+    async function submitOrder(event) {
+      event.preventDefault();
       
-      // Check if customer is valid
-      if (!isValidCustomer(customerName)) {
-        alert("Please select a valid customer from the dropdown list.");
-        showCustomerWarning(true);
+      // Clear any previous validation errors
+      clearValidationErrors();
+      
+      // Validate the form before submission
+      if (!validateForm()) {
+        highlightIncompleteFields();
         return;
       }
       
-      // Get customer details
+      const customerName = document.getElementById('customerName').value.trim();
       const customer = getCustomerById(customerName);
+      const orderData = {
+        customer: {
+          name: customerName,
+          id: customer ? customer.id : null
+        },
+        products: [],
+        grandTotal: parseFloat(document.getElementById('grandTotal').textContent)
+      };
       
-      const orders = [];
-      let isValid = true;
       activeRows.forEach(rowId => {
         const category = document.querySelector(`#${rowId} select`)?.value;
         const size = document.getElementById(`${rowId}-size`)?.value;
-        const flavor = document.getElementById(`${rowId}-flavor`)?.value;
-        const qty = parseInt(document.getElementById(`${rowId}-qty`)?.value || 0);
-        if (category && size && flavor && qty > 0) {
-          const unitPrice = data[category][size].price;
-          orders.push({ category, size, flavor, quantity: qty, unitPrice, totalPrice: qty * unitPrice });
-        } else {
-          isValid = false;
+        
+        if (category && size && data[category][size]) {
+          const product = {
+            category,
+            size,
+            unitPrice: data[category][size].price,
+            flavors: [],
+            productTotal: 0
+          };
+          
+          const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+          
+          flavorRows.forEach(row => {
+            const flavorSelect = row.querySelector('.flavor-select');
+            const quantityInput = row.querySelector('.quantity-input');
+            const flavor = flavorSelect.value;
+            const quantity = parseInt(quantityInput.value) || 0;
+            
+            if (flavor && quantity > 0) {
+              product.flavors.push({
+                flavor,
+                quantity,
+                subtotal: quantity * product.unitPrice
+              });
+              product.productTotal += quantity * product.unitPrice;
+            }
+          });
+          
+          if (product.flavors.length > 0) {
+            orderData.products.push(product);
+          }
         }
       });
       
-      if (!isValid || orders.length === 0) {
-        alert("Please complete all selections.");
-        return;
-      }
-      
-      const grandTotal = parseFloat(document.getElementById('grandTotal').textContent);
-      const payload = {
-        customerId: customer.id,
-        customerName: customer.name,
-        orders,
-        grandTotal,
-        submittedAt: new Date().toISOString()
-      };
-      
-      fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => {
+      try {
+        showLoadingOverlay('Submitting order...');
+        
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData)
+        });
+        
+        hideLoadingOverlay();
+        
         if (response.ok) {
-          alert("Order submitted successfully!");
+          alert('Order submitted successfully!');
+          // Reset form
+          document.getElementById('orderForm').reset();
+          document.getElementById('order-form').innerHTML = '';
+          rowCount = 0;
+          activeRows.clear();
+          flavorCount = {};
+          selectedCustomerId = null;
+          document.getElementById('grandTotal').textContent = '0.00';
+          showCustomerWarning(false);
+          clearValidationErrors();
+          // Add initial product row
+          addProductRow();
         } else {
-          alert("Submission failed. Please try again.");
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-      })
-      .catch(() => alert("Error connecting to webhook."));
+      } catch (error) {
+        hideLoadingOverlay();
+        console.error('Error submitting order:', error);
+        alert('Error submitting order. Please try again.');
+      }
     }
 
-    // Initialize everything when page loads
-    document.addEventListener('DOMContentLoaded', async function() {
-      // Show loading overlay
-      showLoadingOverlay('Loading customers...');
-      
-      // Initialize customer dropdown first
-      await initializeCustomerDropdown();
-
+    // Event listeners for customer search
+    document.addEventListener('DOMContentLoaded', function() {
       const customerInput = document.getElementById('customerName');
-      const customerDropdown = document.getElementById('customerDropdownList');
-
-      // Customer search functionality
+      const dropdown = document.getElementById('customerDropdownList');
+      
       customerInput.addEventListener('input', function(e) {
-        const searchTerm = e.target.value;
-        console.log('User searching for customer:', searchTerm);
-        
-        // Hide warning when user starts typing
-        showCustomerWarning(false);
-        selectedCustomerId = null;
-        
+        const searchTerm = e.target.value.trim();
         filterCustomers(searchTerm);
         displayCustomerDropdown();
         
-        // Show warning if customer doesn't match any from the list
         if (searchTerm && !isValidCustomer(searchTerm)) {
           showCustomerWarning(true);
-        }
-      });
-
-      // Handle customer dropdown item selection
-      customerDropdown.addEventListener('click', function(e) {
-        if (e.target.classList.contains('dropdown-item')) {
-          customerInput.value = e.target.dataset.value;
-          selectedCustomerId = e.target.dataset.id;
-          customerDropdown.style.display = 'none';
+        } else {
           showCustomerWarning(false);
-          console.log('Selected customer:', e.target.dataset.value, 'ID:', selectedCustomerId);
         }
+        
+        clearValidationErrors();
       });
-
-      // Hide dropdown when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.search-container')) {
-          customerDropdown.style.display = 'none';
-        }
-      });
-
-      // Show dropdown when input is focused (if there's a value)
+      
       customerInput.addEventListener('focus', function(e) {
         if (e.target.value) {
-          filterCustomers(e.target.value);
+          filterCustomers(e.target.value.trim());
           displayCustomerDropdown();
         }
       });
-
-      // Hide dropdown on blur
-      customerInput.addEventListener('blur', hideCustomerDropdown);
-
-      // Handle keyboard navigation for customer dropdown
-      customerInput.addEventListener('keydown', function(e) {
-        const items = customerDropdown.querySelectorAll('.dropdown-item');
-        let activeIndex = Array.from(items).findIndex(item => item.classList.contains('active'));
-
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          if (activeIndex < items.length - 1) {
-            if (activeIndex >= 0) items[activeIndex].classList.remove('active');
-            items[activeIndex + 1].classList.add('active');
-          }
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          if (activeIndex > 0) {
-            items[activeIndex].classList.remove('active');
-            items[activeIndex - 1].classList.add('active');
-          }
-        } else if (e.key === 'Enter') {
-          e.preventDefault();
-          if (activeIndex >= 0) {
-            customerInput.value = items[activeIndex].dataset.value;
-            selectedCustomerId = items[activeIndex].dataset.id;
-            customerDropdown.style.display = 'none';
-            showCustomerWarning(false);
-          }
-        } else if (e.key === 'Escape') {
-          customerDropdown.style.display = 'none';
+      
+      customerInput.addEventListener('blur', function() {
+        hideCustomerDropdown();
+      });
+      
+      dropdown.addEventListener('mousedown', function(e) {
+        e.preventDefault(); // Prevent blur event
+      });
+      
+      dropdown.addEventListener('click', function(e) {
+        if (e.target.classList.contains('dropdown-item')) {
+          const customerName = e.target.dataset.value;
+          const customerId = e.target.dataset.id;
+          
+          customerInput.value = customerName;
+          selectedCustomerId = customerId;
+          dropdown.style.display = 'none';
+          showCustomerWarning(false);
+          clearValidationErrors();
         }
       });
-
-      // Initialize with one product row after customers are loaded
+      
+      // Initialize customer dropdown and add first product row
+      initializeCustomerDropdown();
       addProductRow();
+    });
+
+    // Handle keyboard navigation for dropdown
+    document.getElementById('customerName').addEventListener('keydown', function(e) {
+      const dropdown = document.getElementById('customerDropdownList');
+      const items = dropdown.querySelectorAll('.dropdown-item');
+      
+      if (items.length === 0) return;
+      
+      let activeItem = dropdown.querySelector('.dropdown-item.active');
+      let activeIndex = activeItem ? Array.from(items).indexOf(activeItem) : -1;
+      
+      switch(e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          if (activeItem) activeItem.classList.remove('active');
+          activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
+          items[activeIndex].classList.add('active');
+          items[activeIndex].scrollIntoView({ block: 'nearest' });
+          break;
+          
+        case 'ArrowUp':
+          e.preventDefault();
+          if (activeItem) activeItem.classList.remove('active');
+          activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
+          items[activeIndex].classList.add('active');
+          items[activeIndex].scrollIntoView({ block: 'nearest' });
+          break;
+          
+        case 'Enter':
+          if (activeItem) {
+            e.preventDefault();
+            const customerName = activeItem.dataset.value;
+            const customerId = activeItem.dataset.id;
+            
+            this.value = customerName;
+            selectedCustomerId = customerId;
+            dropdown.style.display = 'none';
+            showCustomerWarning(false);
+            clearValidationErrors();
+          }
+          break;
+          
+        case 'Escape':
+          dropdown.style.display = 'none';
+          break;
+      }
     });
   </script>
 </body>
