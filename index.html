@@ -195,14 +195,33 @@
       cursor: not-allowed;
     }
     
-    .product-total {
-      text-align: right;
-      font-size: 16px;
+    /* .product-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
       font-weight: bold;
       color: #007BFF;
       margin-top: 15px;
       padding-top: 15px;
       border-top: 1px solid #e0e0e0;
+    } */
+     .product-summary {
+  display: flex;
+  justify-content: flex-end; /* Pushes items to the right */
+  align-items: center;
+  gap: 15px; /* Space between the two divs */
+  font-weight: bold;
+  color: #007BFF;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+    
+    .product-summary > div {
+      font-size: 16px;
     }
     
     .delete-btn {
@@ -1063,7 +1082,10 @@
           <div class="flavors-title">Select Flavors and Quantities</div><div id="${rowId}-flavors-list"></div>
           <button type="button" class="add-flavor-btn" id="${rowId}-add-flavor" onclick="addFlavorRow('${rowId}')" disabled>+ Add More</button>
         </div>
-        <div class="product-total" id="${rowId}-total">Product Total: $0.00</div>`;
+        <div class="product-summary">
+            <div>Quantity Total: <span id="${rowId}-quantity">0</span> units</div>
+            <div>Product Total: $<span id="${rowId}-total">0.00</span></div>
+        </div>`;
       document.getElementById('order-form').appendChild(row);
       updateDeleteButtons(); updateTotal();
     }
@@ -1187,7 +1209,8 @@
     }
 
     function updateTotal() {
-      let grandTotal = 0; let grandQuantity = 0;
+      let grandTotal = 0;
+      let grandQuantity = 0;
       activeRows.forEach(rowId => {
         const categorySelect = document.querySelector(`#${rowId} select`);
         const category = categorySelect ? categorySelect.value : null;
@@ -1195,20 +1218,33 @@
         const size = sizeSelect ? sizeSelect.value : null;
         
         let productTotal = 0;
-        // Ensure data, data[category], and data[category][size] exist before calculating
+        let productQuantity = 0; // New: for individual product quantity
+
         if (category && size && data && data[category] && data[category][size]) {
           const unitPrice = data[category][size].price;
           const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
           flavorRows.forEach(row => {
             const flavor = row.querySelector('.flavor-select').value;
             const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
-            if (flavor && quantity > 0) { productTotal += quantity * unitPrice; grandQuantity += quantity; }
+            if (flavor && quantity > 0) {
+              productTotal += quantity * unitPrice;
+              productQuantity += quantity; // New: Accumulate quantity for this product
+            }
           });
         }
+        
+        // Update the DOM for this specific product row
         const productTotalEl = document.getElementById(`${rowId}-total`);
-        if (productTotalEl) productTotalEl.textContent = `Product Total: $${productTotal.toFixed(2)}`;
+        const productQuantityEl = document.getElementById(`${rowId}-quantity`);
+        if (productTotalEl) productTotalEl.textContent = productTotal.toFixed(2);
+        if (productQuantityEl) productQuantityEl.textContent = productQuantity;
+
+        // Add this product's totals to the grand totals
         grandTotal += productTotal;
+        grandQuantity += productQuantity;
       });
+
+      // Update the grand total display at the bottom of the form
       document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
       document.getElementById('grandQuantity').textContent = grandQuantity;
     }
