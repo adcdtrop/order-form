@@ -1,534 +1,532 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Product Order Form</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #000;
-      padding: 10px;
-      max-width: 1200px;
-      margin: auto;
-      overflow-x: hidden;
-    }
-    
-    h2 {
-      text-align: center;
-      color: #007BFF;
-      margin-bottom: 30px;
-      font-size: 1.5rem;
-    }
-    
-    .form-row {
-      background: #f9f9f9;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      padding: 15px;
-    }
-    
-    .product-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 15px;
-      align-items: end;
-      margin-bottom: 20px;
-    }
-    
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-    
-    .form-group label {
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      color: #555;
-    }
-    
-    .form-group select,
-    .form-group input {
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 100%;
-      min-width: 0;
-      height: 40px;
-    }
-    
-    .form-group input[readonly] {
-      background: #eef5ff;
-      color: #007BFF;
-      font-weight: bold;
-      text-align: center;
-    }
-    
-    .flavors-section {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 2px solid #e0e0e0;
-    }
-    
-    .flavors-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #007BFF;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-    }
-    
-    .flavor-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto; /* select, quantity-control, remove-btn */
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 10px;
-      background: #fff;
-      border-radius: 4px;
-      border: 1px solid #e0e0e0;
-    }
-    
-    .flavor-select {
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      height: 36px;
-    }
-    
-    .quantity-input {
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      height: 36px;
-      text-align: center;
-    }
-
-    .quantity-control {
-      display: flex;
-      align-items: center;
-    }
-
-    .quantity-btn {
-      background-color: #e9ecef;
-      color: #495057;
-      border: 1px solid #ccc;
-      padding: 0;
-      width: 30px;
-      height: 36px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 34px; 
-    }
-    .quantity-btn:hover {
-      background-color: #ced4da;
-    }
-    .quantity-btn:active {
-      background-color: #adb5bd;
-    }
-
-    .quantity-btn.quantity-minus {
-      border-right: none;
-      border-radius: 4px 0 0 4px;
-    }
-
-    .quantity-btn.quantity-plus {
-      border-left: none;
-      border-radius: 0 4px 4px 0;
-    }
-
-    .flavor-row .quantity-control .quantity-input {
-      width: 50px; 
-      border-radius: 0; 
-      border-left: 1px solid #ccc; 
-      border-right: 1px solid #ccc;
-      padding: 8px 4px; 
-    }
-    
-    .remove-flavor-btn {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      padding: 8px 12px;
-      cursor: pointer;
-      height: 36px;
-      min-width: 60px;
-    }
-    
-    .remove-flavor-btn:hover {
-      background-color: #c82333;
-    }
-    
-    .add-flavor-btn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      padding: 8px 15px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    
-    .add-flavor-btn:hover {
-      background-color: #218838;
-    }
-    
-    .add-flavor-btn:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-    }
-    
-     .product-summary {
-      display: flex;
-      justify-content: flex-end; 
-      align-items: center;
-      gap: 15px; 
-      font-weight: bold;
-      color: #007BFF;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #e0e0e0;
-      flex-wrap: wrap;
-    }
-    
-    .product-summary > div {
-      font-size: 16px;
-    }
-    
-    .delete-btn {
-      background-color: #ffa500;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      padding: 8px;
-      cursor: pointer;
-      width: 100%;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .delete-btn:hover {
-      background-color: #ff8c00;
-    }
-    
-    .btn,
-    .submit-btn {
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      width: 100%;
-      max-width: 200px;
-    }
-    
-    .btn {
-      background-color: #007BFF;
-      color: white;
-      margin-bottom: 20px;
-    }
-    
-    .btn:hover {
-      background-color: #0056b3;
-    }
-     .btn:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-    }
-    
-    .submit-btn {
-      background-color: #ffa500;
-      color: white;
-      width: 100%;
-      max-width: none;
-      margin-top: 20px;
-    }
-    
-    .submit-btn:hover {
-      background-color: #e69500;
-    }
-    
-    .total-box {
-      font-size: 18px;
-      text-align: center;
-      margin-top: 20px;
-      background: #eef5ff;
-      padding: 15px;
-      border: 2px solid #007BFF;
-      color: #007BFF;
-      border-radius: 8px;
-      word-break: break-word;
-    }
-
-    .total-box div {
-        margin-bottom: 5px; 
-    }
-    .total-box div:last-child {
-        margin-bottom: 0;
-    }
-    
-    .customer-name {
-      margin-bottom: 20px;
-      position: relative;
-      width: 100%;
-    }
-    
-    .loading-overlay {
-      display: flex;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007BFF;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-      color: #007BFF;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    
-    .search-container {
-      position: relative;
-      width: 100%;
-    }
-    
-    .dropdown-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 2px solid #ddd;
-      border-top: none;
-      border-radius: 0 0 5px 5px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none;
-    }
-    
-    .dropdown-item {
-      padding: 10px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      word-break: break-word;
-    }
-    
-    .dropdown-item:hover,
-    .dropdown-item.active {
-      background-color: #f0f0f0;
-    }
-    
-    .dropdown-item:last-child {
-      border-bottom: none;
-    }
-    
-    .no-results {
-      padding: 10px 12px;
-      color: #666;
-      font-style: italic;
-    }
-    
-    .customer-status {
-      font-size: 12px;
-      margin-top: 5px;
-      color: #666;
-    }
-     .customer-address-display {
-      font-size: 14px;
-      color: #333;
-      background-color: #f0f8ff;
-      border: 1px solid #b0c4de;
-      padding: 8px 12px;
-      border-radius: 4px;
-      margin-top: 8px;
-      word-break: break-word;
-    }
-    
-    .customer-warning {
-      background-color: #fff3cd;
-      border: 1px solid #ffeaa7;
-      color: #856404;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 5px;
-      font-size: 14px;
-      display: none;
-      word-break: break-word;
-    }
-    .order-date {
-      margin-bottom: 20px;
-      position: relative;
-      width: 100%;
-    }
-
-    .order-date input[type="date"] {
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 100%;
-      min-width: 0;
-      height: 40px;
-    }
-
-    .order-date input[type="date"]:focus {
-      border-color: #007BFF;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
-
-    .order-date label {
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      color: #555;
-      display: block;
-    }
-    
-    #order-form-placeholder {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Product Order Form</title>
+    <style>
+        * {
+        box-sizing: border-box;
+        }
+        
+        body {
+        font-family: Arial, sans-serif;
+        background: #fff;
+        color: #000;
+        padding: 10px;
+        max-width: 1200px;
+        margin: auto;
+        overflow-x: hidden;
+        }
+        
+        h2 {
         text-align: center;
-        color: #555;
-        padding: 20px;
-        border: 2px dashed #ddd;
+        color: #007BFF;
+        margin-bottom: 30px;
+        font-size: 1.5rem;
+        }
+        
+        .form-row {
+        background: #f9f9f9;
         border-radius: 8px;
         margin-bottom: 15px;
-    }
-    
-    @media (max-width: 1024px) {
-      body { padding: 8px; }
-      .product-header { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .delete-btn { grid-column: span 2; margin-top: 10px; max-width: 150px; justify-self: center; }
-    }
-    @media (max-width: 768px) {
-      body { padding: 5px; }
-      h2 { font-size: 1.3rem; margin-bottom: 20px; }
-      .form-row { padding: 12px; }
-      .product-header { grid-template-columns: 1fr; gap: 15px; }
-      .flavor-row { grid-template-columns: 1fr; gap: 10px; text-align: center; }
-      .flavor-row .quantity-control { justify-content: center; margin: 0 auto; max-width: 180px; width: 100%; }
-      .flavor-row .quantity-control .quantity-input { flex-grow: 1; min-width: 40px; max-width: 80px; width: auto; }
-      .flavor-row .quantity-control .quantity-btn { flex-shrink: 0; }
-      .remove-flavor-btn { width: 100%; max-width: 120px; margin: 0 auto; }
-      .form-group label { font-size: 13px; margin-bottom: 6px; }
-      .form-group select, .form-group input { padding: 12px 8px; font-size: 16px; min-height: 44px; height: 44px; }
-      .delete-btn { padding: 12px; font-size: 16px; min-height: 44px; height: 44px; margin-top: 10px; max-width: none; width: 100%; }
-      .btn { max-width: none; padding: 15px 20px; font-size: 18px; }
-      .submit-btn { padding: 15px 20px; font-size: 18px; margin-top: 30px; }
-      .total-box { font-size: 20px; padding: 20px 15px; margin-top: 30px; }
-      .dropdown-list { max-height: 150px; }
-      .dropdown-item { padding: 15px 12px; font-size: 16px; }
-      .customer-warning { font-size: 15px; padding: 12px; }
-      .customer-address-display { font-size: 15px; padding: 12px; }
-      .order-date { margin-bottom: 15px; }
-      .order-date input[type="date"] { padding: 12px 8px; font-size: 16px; min-height: 44px; height: 44px; }
-      .order-date label { font-size: 13px; margin-bottom: 6px; }
-    }
-    @media (max-width: 480px) {
-      body { padding: 3px; }
-      h2 { font-size: 1.2rem; }
-      .form-row { padding: 10px 8px; }
-      .total-box { font-size: 18px; padding: 15px 10px; }
-      .flavor-row { padding: 8px; }
-      .flavor-row .quantity-control { max-width: 160px; }
-      .customer-address-display { font-size: 14px; padding: 10px; }
-    }
-    @media (min-width: 1200px) {
-      .form-row { max-width: 1000px; margin-left: auto; margin-right: auto; }
-    }
-  </style>
-</head>
-<body>
-  <div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Loading...</div>
-  </div>
+        border: 1px solid #ddd;
+        padding: 15px;
+        }
+        
+        .product-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 15px;
+        align-items: end;
+        margin-bottom: 20px;
+        }
+        
+        .form-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        }
+        
+        .form-group label {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        color: #555;
+        }
+        
+        .form-group select,
+        .form-group input {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+        min-width: 0;
+        height: 40px;
+        }
+        
+        .form-group input[readonly] {
+        background: #eef5ff;
+        color: #007BFF;
+        font-weight: bold;
+        text-align: center;
+        }
+        
+        .flavors-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #e0e0e0;
+        }
+        
+        .flavors-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #007BFF;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        }
+        
+        .flavor-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto; /* select, quantity-control, remove-btn */
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+        }
+        
+        .flavor-select {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        height: 36px;
+        }
+        
+        .quantity-input {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        height: 36px;
+        text-align: center;
+        }
 
-  <h2>Product Order Form</h2>
-  <form id="orderForm" onsubmit="submitOrder(event)">
-    <div class="form-group customer-name">
-      <label for="customerName">Customer Name</label>
-      <div class="search-container">
-        <input type="text" id="customerName" name="customerName" placeholder="Search for customer..." required autocomplete="off" />
-        <div id="customerDropdownList" class="dropdown-list"></div>
-      </div>
-      <div id="selectedCustomerAddress" class="customer-address-display" style="display: none;"></div>
-      <div id="customerStatus" class="customer-status">Loading customers...</div>
-      <div id="customerWarning" class="customer-warning">
-        ⚠️ Customer not found in the system. Select from Dropdown
-      </div>
-    </div>
-    <div class="form-group order-date">
-      <label for="orderDate">Delivery Date</label>
-      <input type="date" id="orderDate" name="orderDate" required />
-      <div id="orderDateStatus" class="customer-status" style="display: none;"></div>
-    </div>
-    <div id="order-form">
-        <div id="order-form-placeholder">Please select a customer to view available products.</div>
-    </div>
-    <button id="addProductBtn" class="btn" type="button" onclick="addProductRow()" disabled>+ Add Product</button>
-    <div class="total-box">
-      <div>Grand Total: $<span id="grandTotal">0.00</span></div>
-      <div>Total Quantity: <span id="grandQuantity">0</span> units</div>
-    </div>
-    <div id="validationErrors" class="validation-errors" style="display: none;"></div>
-    <button class="submit-btn" type="submit">Submit Order</button>
-  </form>
+        .quantity-control {
+        display: flex;
+        align-items: center;
+        }
 
-  <script>
+        .quantity-btn {
+        background-color: #e9ecef;
+        color: #495057;
+        border: 1px solid #ccc;
+        padding: 0;
+        width: 30px;
+        height: 36px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 34px; 
+        }
+        .quantity-btn:hover {
+        background-color: #ced4da;
+        }
+        .quantity-btn:active {
+        background-color: #adb5bd;
+        }
+
+        .quantity-btn.quantity-minus {
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+        }
+
+        .quantity-btn.quantity-plus {
+        border-left: none;
+        border-radius: 0 4px 4px 0;
+        }
+
+        .flavor-row .quantity-control .quantity-input {
+        width: 50px; 
+        border-radius: 0; 
+        border-left: 1px solid #ccc; 
+        border-right: 1px solid #ccc;
+        padding: 8px 4px; 
+        }
+        
+        .remove-flavor-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+        height: 36px;
+        min-width: 60px;
+        }
+        
+        .remove-flavor-btn:hover {
+        background-color: #c82333;
+        }
+        
+        .add-flavor-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        padding: 8px 15px;
+        cursor: pointer;
+        margin-top: 10px;
+        }
+        
+        .add-flavor-btn:hover {
+        background-color: #218838;
+        }
+        
+        .add-flavor-btn:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        }
+        
+        .product-summary {
+        display: flex;
+        justify-content: flex-end; 
+        align-items: center;
+        gap: 15px; 
+        font-weight: bold;
+        color: #007BFF;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+        flex-wrap: wrap;
+        }
+        
+        .product-summary > div {
+        font-size: 16px;
+        }
+        
+        .delete-btn {
+        background-color: #ffa500;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        padding: 8px;
+        cursor: pointer;
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+        
+        .delete-btn:hover {
+        background-color: #ff8c00;
+        }
+        
+        .btn,
+        .submit-btn {
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        max-width: 200px;
+        }
+        
+        .btn {
+        background-color: #007BFF;
+        color: white;
+        margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+        background-color: #0056b3;
+        }
+        .btn:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        }
+        
+        .submit-btn {
+        background-color: #ffa500;
+        color: white;
+        width: 100%;
+        max-width: none;
+        margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+        background-color: #e69500;
+        }
+        
+        .total-box {
+        font-size: 18px;
+        text-align: center;
+        margin-top: 20px;
+        background: #eef5ff;
+        padding: 15px;
+        border: 2px solid #007BFF;
+        color: #007BFF;
+        border-radius: 8px;
+        word-break: break-word;
+        }
+
+        .total-box div {
+            margin-bottom: 5px; 
+        }
+        .total-box div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .customer-name {
+        margin-bottom: 20px;
+        position: relative;
+        width: 100%;
+        }
+        
+        .loading-overlay {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        }
+        
+        .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #007BFF;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+        color: #007BFF;
+        font-size: 18px;
+        font-weight: bold;
+        }
+        
+        .search-container {
+        position: relative;
+        width: 100%;
+        }
+        
+        .dropdown-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        }
+        
+        .dropdown-item {
+        padding: 10px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        word-break: break-word;
+        }
+        
+        .dropdown-item:hover,
+        .dropdown-item.active {
+        background-color: #f0f0f0;
+        }
+        
+        .dropdown-item:last-child {
+        border-bottom: none;
+        }
+        
+        .no-results {
+        padding: 10px 12px;
+        color: #666;
+        font-style: italic;
+        }
+        
+        .customer-status {
+        font-size: 12px;
+        margin-top: 5px;
+        color: #666;
+        }
+        .customer-address-display {
+        font-size: 14px;
+        color: #333;
+        background-color: #f0f8ff;
+        border: 1px solid #b0c4de;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-top: 8px;
+        word-break: break-word;
+        }
+        
+        .customer-warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 5px;
+        font-size: 14px;
+        display: none;
+        word-break: break-word;
+        }
+        .order-date {
+        margin-bottom: 20px;
+        position: relative;
+        width: 100%;
+        }
+
+        .order-date input[type="date"] {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+        min-width: 0;
+        height: 40px;
+        }
+
+        .order-date input[type="date"]:focus {
+        border-color: #007BFF;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .order-date label {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        color: #555;
+        display: block;
+        }
+        
+        #order-form-placeholder {
+            text-align: center;
+            color: #555;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 1024px) {
+        body { padding: 8px; }
+        .product-header { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .delete-btn { grid-column: span 2; margin-top: 10px; max-width: 150px; justify-self: center; }
+        }
+        @media (max-width: 768px) {
+        body { padding: 5px; }
+        h2 { font-size: 1.3rem; margin-bottom: 20px; }
+        .form-row { padding: 12px; }
+        .product-header { grid-template-columns: 1fr; gap: 15px; }
+        .flavor-row { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+        .flavor-row .quantity-control { justify-content: center; margin: 0 auto; max-width: 180px; width: 100%; }
+        .flavor-row .quantity-control .quantity-input { flex-grow: 1; min-width: 40px; max-width: 80px; width: auto; }
+        .flavor-row .quantity-control .quantity-btn { flex-shrink: 0; }
+        .remove-flavor-btn { width: 100%; max-width: 120px; margin: 0 auto; }
+        .form-group label { font-size: 13px; margin-bottom: 6px; }
+        .form-group select, .form-group input { padding: 12px 8px; font-size: 16px; min-height: 44px; height: 44px; }
+        .delete-btn { padding: 12px; font-size: 16px; min-height: 44px; height: 44px; margin-top: 10px; max-width: none; width: 100%; }
+        .btn { max-width: none; padding: 15px 20px; font-size: 18px; }
+        .submit-btn { padding: 15px 20px; font-size: 18px; margin-top: 30px; }
+        .total-box { font-size: 20px; padding: 20px 15px; margin-top: 30px; }
+        .dropdown-list { max-height: 150px; }
+        .dropdown-item { padding: 15px 12px; font-size: 16px; }
+        .customer-warning { font-size: 15px; padding: 12px; }
+        .customer-address-display { font-size: 15px; padding: 12px; }
+        .order-date { margin-bottom: 15px; }
+        .order-date input[type="date"] { padding: 12px 8px; font-size: 16px; min-height: 44px; height: 44px; }
+        .order-date label { font-size: 13px; margin-bottom: 6px; }
+        }
+        @media (max-width: 480px) {
+        body { padding: 3px; }
+        h2 { font-size: 1.2rem; }
+        .form-row { padding: 10px 8px; }
+        .total-box { font-size: 18px; padding: 15px 10px; }
+        .flavor-row { padding: 8px; }
+        .flavor-row .quantity-control { max-width: 160px; }
+        .customer-address-display { font-size: 14px; padding: 10px; }
+        }
+        @media (min-width: 1200px) {
+        .form-row { max-width: 1000px; margin-left: auto; margin-right: auto; }
+        }
+    </style>
+    </head>
+    <body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <h2>Product Order Form</h2>
+    <form id="orderForm" onsubmit="submitOrder(event)">
+        <div class="form-group customer-name">
+        <label for="customerName">Customer Name</label>
+        <div class="search-container">
+            <input type="text" id="customerName" name="customerName" placeholder="Search for customer..." required autocomplete="off" />
+            <div id="customerDropdownList" class="dropdown-list"></div>
+        </div>
+        <div id="selectedCustomerAddress" class="customer-address-display" style="display: none;"></div>
+        <div id="customerStatus" class="customer-status">Loading customers...</div>
+        <div id="customerWarning" class="customer-warning">
+            ⚠️ Customer not found in the system. Select from Dropdown
+        </div>
+        </div>
+        <div class="form-group order-date">
+        <label for="orderDate">Delivery Date</label>
+        <input type="date" id="orderDate" name="orderDate" required />
+        <div id="orderDateStatus" class="customer-status" style="display: none;"></div>
+        </div>
+        <div id="order-form">
+            <div id="order-form-placeholder">Please select a customer to view available products.</div>
+        </div>
+        <button id="addProductBtn" class="btn" type="button" onclick="addProductRow()" disabled>+ Add Product</button>
+        <div class="total-box">
+        <div>Grand Total: $<span id="grandTotal">0.00</span></div>
+        <div>Total Quantity: <span id="grandQuantity">0</span> units</div>
+        </div>
+        <div id="validationErrors" class="validation-errors" style="display: none;"></div>
+        <button class="submit-btn" type="submit">Submit Order</button>
+    </form>
+
+    <script>
     const WEBHOOK_URL = "https://hook.us2.make.com/675ao9xc3l8a0fwiqlb9iyq7xrh3r81j";
 
     // --- Monday.com API Configuration ---
     const MONDAY_API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjUxOTIxNzk3MCwiYWFpIjoxMSwidWlkIjo3NjYxMTgyNiwiaWFkIjoiMjAyNS0wNS0yOVQwMTozNDoxOS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6Mjk0NjY1NjMsInJnbiI6InVzZTEifQ.YusQcMMhB4qL_QYTIhVVOzaaoN5i2ReecYQSDvNSoLU';
     
-    // Customer Board Configuration
     const CUSTOMER_BOARD_ID = '9197029495'; 
     const ADDRESS_COLUMN_ID = 'text_mkr4mkaa'; 
     const PRICE_GROUP_COLUMN_ID = 'color_mksxkatd';
 
-    // Price List (Product) Board Configuration
     const PRICE_LIST_BOARD_ID = 9287107016;
     const PRICE_COLUMN_ID = 'numeric_mkrjw3zn';
     const SIZE_NAME_COLUMN_ID = 'text_mkrk5wbk';
@@ -540,7 +538,12 @@
     let priceListGroupMap = {};
     let selectedCustomerId = null;
     let selectedCustomerAddress = '';
-    let data = {}; // This will hold the products for the selected customer
+    
+    // CHANGE #1: The data structure is now an object containing both products and an ordered category list.
+    let data = {
+        products: {},
+        categories: []
+    };
 
     let rowCount = 0;
     let activeRows = new Set();
@@ -568,7 +571,7 @@
             if (g.title) map[g.title.trim()] = g.id;
             return map;
         }, {});
-        groupMap[""] = "topics"; // Default mapping for blank/unmatched titles
+        groupMap[""] = "topics";
         return groupMap;
     }
 
@@ -587,10 +590,7 @@
                         items { 
                             id 
                             name 
-                            column_values(ids: ["${ADDRESS_COLUMN_ID}", "${PRICE_GROUP_COLUMN_ID}"]) {
-                                id
-                                text
-                            }
+                            column_values(ids: ["${ADDRESS_COLUMN_ID}", "${PRICE_GROUP_COLUMN_ID}"]) { id text }
                         } 
                     } 
                 } 
@@ -634,11 +634,7 @@
                             cursor
                             items {
                                 name
-                                column_values(ids: ["${PRICE_COLUMN_ID}", "${SIZE_NAME_COLUMN_ID}", "${FLAVOURS_COLUMN_ID}"]) {
-                                    id
-                                    text
-                                    value
-                                }
+                                column_values(ids: ["${PRICE_COLUMN_ID}", "${SIZE_NAME_COLUMN_ID}", "${FLAVOURS_COLUMN_ID}"]) { id text value }
                             }
                         }
                     }
@@ -661,8 +657,11 @@
             }
             if (pageCount > 50) { console.warn("Product fetch pagination limit reached."); break; }
         } while (cursor);
+        
+        // CHANGE #2: Build the new data structure with an ordered category list.
+        const products = {};
+        const categories = [];
 
-        const transformedData = {};
         allItems.forEach(item => {
             const category = item.name;
             const getValue = (id, useValueForNumeric = false) => {
@@ -684,27 +683,24 @@
                 console.warn("Skipping product item due to missing data:", { category, sizeName, price, item });
                 return;
             }
-
-            if (!transformedData[category]) transformedData[category] = {};
-            transformedData[category][sizeName] = { price, flavors: flavours };
+            
+            if (!products[category]) {
+                products[category] = [];
+                categories.push(category); // Add category to the ordered list only when it's first seen
+            }
+            products[category].push({ sizeName, price, flavors: flavours });
         });
         
-        return transformedData;
+        return { products, categories }; // Return the complete data object
     }
 
-
-    // --- Initialization and Customer Selection ---
-    
     document.addEventListener('DOMContentLoaded', async function() {
       showLoadingOverlay('Initializing form...');
       setDefaultOrderDate();
       setupEventListeners();
       
       try {
-        const [groups, customers] = await Promise.all([
-            fetchPriceListGroups(),
-            fetchAllCustomers()
-        ]);
+        const [groups, customers] = await Promise.all([ fetchPriceListGroups(), fetchAllCustomers() ]);
         priceListGroupMap = groups;
         allCustomers = customers;
 
@@ -724,77 +720,67 @@
     });
 
     async function onCustomerSelect(customerName) {
-    const customer = allCustomers.find(c => c.name === customerName);
-    if (!customer) {
-        console.error("Selected customer not found in cached list:", customerName);
-        resetProductSection(true);
-        showCustomerWarning(true);
-        return;
-    }
+        const customer = allCustomers.find(c => c.name === customerName);
+        if (!customer) {
+            console.error("Selected customer not found in cached list:", customerName);
+            resetProductSection(true);
+            showCustomerWarning(true);
+            return;
+        }
 
-    selectedCustomerId = customer.id;
-    selectedCustomerAddress = customer.address;
-    displaySelectedCustomerAddress(selectedCustomerAddress);
-    showCustomerWarning(false);
-    clearValidationErrors();
+        selectedCustomerId = customer.id;
+        selectedCustomerAddress = customer.address;
+        displaySelectedCustomerAddress(selectedCustomerAddress);
+        showCustomerWarning(false);
+        clearValidationErrors();
 
-    // --- START: Improved Group ID Logic ---
+        const customerLabel = customer.priceGroupLabel;
+        let groupId = priceListGroupMap[customerLabel];
 
-    const customerLabel = customer.priceGroupLabel;
-    let groupId = priceListGroupMap[customerLabel]; // Attempt to find a direct match
-
-    // For debugging: Log what is being looked up.
-    console.log(`Customer: "${customer.name}", Price Group Label: "${customerLabel}"`);
-    console.log("Available Price List Groups:", priceListGroupMap);
-
-    if (groupId) {
-        console.log(`✅ Match found! Using Group ID: "${groupId}"`);
-    } else {
-        groupId = priceListGroupMap[""]; // Fallback to the default
-        console.warn(`⚠️ No match found for label "${customerLabel}". Falling back to default Group ID: "${groupId}"`);
         if (!groupId) {
-             // This is a critical failure if even the default is missing.
-             alert('Error: No specific price group found and no default group is available. Cannot load products.');
-             resetProductSection(true);
-             return;
+            groupId = priceListGroupMap[""];
+            console.warn(`⚠️ No match found for label "${customerLabel}". Falling back to default Group ID: "${groupId}"`);
+            if (!groupId) {
+                 alert('Error: No specific price group found and no default group is available. Cannot load products.');
+                 resetProductSection(true);
+                 return;
+            }
+        }
+        
+        showLoadingOverlay(`Loading products for ${customer.name}...`);
+        try {
+            resetProductSection(false);
+            const fetchedProducts = await fetchProductsForGroup(groupId);
+            
+            // CHANGE #3: Check the new data structure for products.
+            if (fetchedProducts && fetchedProducts.categories.length > 0) {
+                data = fetchedProducts;
+                document.getElementById('addProductBtn').disabled = false;
+                document.getElementById('order-form-placeholder').style.display = 'none';
+                addProductRow();
+            } else {
+                data = { products: {}, categories: [] };
+                document.getElementById('addProductBtn').disabled = true;
+                const placeholder = document.getElementById('order-form-placeholder');
+                placeholder.textContent = 'No products found for this customer\'s price list.';
+                placeholder.style.display = 'block';
+                console.warn(`No products found for the determined group ID: ${groupId}`);
+            }
+        } catch (error) {
+            console.error('Error fetching products for group:', error);
+            alert('Failed to load products. Please try again.');
+            resetProductSection(true);
+        } finally {
+            hideLoadingOverlay();
         }
     }
-    // --- END: Improved Group ID Logic ---
-
-
-    showLoadingOverlay(`Loading products for ${customer.name}...`);
-    try {
-        resetProductSection(false);
-        const fetchedProducts = await fetchProductsForGroup(groupId);
-
-        if (Object.keys(fetchedProducts).length > 0) {
-            data = fetchedProducts;
-            document.getElementById('addProductBtn').disabled = false;
-            document.getElementById('order-form-placeholder').style.display = 'none';
-            addProductRow();
-        } else {
-            data = {};
-            document.getElementById('addProductBtn').disabled = true;
-            const placeholder = document.getElementById('order-form-placeholder');
-            placeholder.textContent = 'No products found for this customer\'s price list.';
-            placeholder.style.display = 'block';
-            console.warn(`No products found for the determined group ID: ${groupId}`);
-        }
-    } catch (error) {
-        console.error('Error fetching products for group:', error);
-        alert('Failed to load products. Please try again.');
-        resetProductSection(true);
-    } finally {
-        hideLoadingOverlay();
-    }
-}
     
     function resetProductSection(isError = false) {
         document.getElementById('order-form').innerHTML = '';
         activeRows.clear();
         rowCount = 0;
         flavorCount = {};
-        data = {};
+        data = { products: {}, categories: [] }; // Reset to the new empty structure
         updateTotal();
         document.getElementById('addProductBtn').disabled = true;
 
@@ -810,9 +796,6 @@
         document.getElementById('order-form').appendChild(placeholder);
     }
     
-
-    // --- Core Form Logic (Add/Remove Rows, Update Totals, etc.) ---
-    
     function addProductRow() {
       const placeholder = document.getElementById('order-form-placeholder');
       if (placeholder) placeholder.style.display = 'none';
@@ -821,8 +804,10 @@
       const row = document.createElement('div'); row.className = 'form-row'; row.id = rowId;
       
       let categoryOptions = '<option value="">Select Category</option>';
-      if (Object.keys(data).length > 0) {
-          categoryOptions += Object.keys(data).sort().map(cat => `<option value="${cat}">${cat}</option>`).join('');
+      
+      // CHANGE #4: Use the ordered `data.categories` array instead of Object.keys().sort()
+      if (data.categories.length > 0) {
+          categoryOptions += data.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
       } else {
           console.warn("No product data available to populate categories.");
       }
@@ -831,7 +816,7 @@
         <div class="product-header">
           <div class="form-group"><label>Category</label><select onchange="populateSizes('${rowId}', this.value); clearValidationErrors();">${categoryOptions}</select></div>
           <div class="form-group"><label>Size</label><select id="${rowId}-size" onchange="populateFlavors('${rowId}', this.value); clearValidationErrors();"><option value="">Select Size</option></select></div>
-          <div class="form-group"><label> </label><button class="delete-btn" type="button" onclick="deleteRow('${rowId}')">×</button></div>
+          <div class="form-group"><label> </label><button class="delete-btn" type="button" onclick="deleteRow('${rowId}')">×</button></div>
         </div>
         <div class="flavors-section" id="${rowId}-flavors-section" style="display: none;">
           <div class="flavors-title">Select Flavors and Quantities</div><div id="${rowId}-flavors-list"></div>
@@ -848,9 +833,12 @@
     function populateSizes(rowId, category) {
       const sizeField = document.getElementById(`${rowId}-size`);
       sizeField.innerHTML = '<option value="">Select Size</option>';
-      populateFlavors(rowId, ''); // Clear flavors
-      if (category && data[category]) { 
-        Object.keys(data[category]).sort().forEach(size => { sizeField.innerHTML += `<option value="${size}">${size}</option>`; }); 
+      populateFlavors(rowId, ''); 
+      // CHANGE #5: Access products via `data.products`
+      if (category && data.products[category]) { 
+        data.products[category].forEach(item => { 
+          sizeField.innerHTML += `<option value="${item.sizeName}">${item.sizeName}</option>`; 
+        }); 
       }
       updateTotal();
     }
@@ -862,7 +850,11 @@
       const addButton = document.getElementById(`${rowId}-add-flavor`);
       
       flavorsList.innerHTML = '';
-      if (category && size && data[category]?.[size]) {
+
+      // CHANGE #6: Access products via `data.products`
+      const productItem = data.products[category]?.find(item => item.sizeName === size);
+      
+      if (category && size && productItem) {
         flavorsSection.style.display = 'block';
         addButton.disabled = false;
         flavorCount[rowId] = 1;
@@ -879,19 +871,24 @@
     function addFlavorRowInternal(rowId) {
       const category = document.querySelector(`#${rowId} select`).value;
       const size = document.getElementById(`${rowId}-size`).value;
-      const availableFlavors = data[category]?.[size]?.flavors;
+      
+      // CHANGE #7: Access products via `data.products`
+      const productItem = data.products[category]?.find(item => item.sizeName === size);
+      const availableFlavors = productItem?.flavors;
       if (!Array.isArray(availableFlavors)) return;
 
       const flavorElementId = `${rowId}-flavor-${flavorCount[rowId]}`; 
       const flavorRow = document.createElement('div'); flavorRow.className = 'flavor-row'; flavorRow.id = flavorElementId;
+      
       flavorRow.innerHTML = `
-        <select class="flavor-select" onchange="updateTotal(); clearValidationErrors();"><option value="">Select Flavor</option>${availableFlavors.sort().map(f => `<option value="${f}">${f}</option>`).join('')}</select>
+        <select class="flavor-select" onchange="updateTotal(); clearValidationErrors();"><option value="">Select Flavor</option>${availableFlavors.map(f => `<option value="${f}">${f}</option>`).join('')}</select>
         <div class="quantity-control">
             <button type="button" class="quantity-btn quantity-minus" onclick="decrementQuantity('${flavorElementId}')">-</button>
             <input type="number" class="quantity-input" min="1" value="1" onchange="updateTotal(); clearValidationErrors();" placeholder="Qty" />
             <button type="button" class="quantity-btn quantity-plus" onclick="incrementQuantity('${flavorElementId}')">+</button>
         </div>
         <button type="button" class="remove-flavor-btn" onclick="removeFlavorRow('${flavorElementId}', '${rowId}')">Remove</button>`;
+
       document.getElementById(`${rowId}-flavors-list`).appendChild(flavorRow);
       updateRemoveFlavorButtons(rowId);
     }
@@ -916,8 +913,11 @@
         const size = document.getElementById(`${rowId}-size`)?.value;
         let productTotal = 0, productQuantity = 0;
 
-        if (category && size && data[category]?.[size]) {
-          const unitPrice = data[category][size].price;
+        // CHANGE #8: Access products via `data.products`
+        const productItem = data.products[category]?.find(item => item.sizeName === size);
+
+        if (category && size && productItem) {
+          const unitPrice = productItem.price;
           document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`).forEach(row => {
             const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
             if (row.querySelector('.flavor-select').value && quantity > 0) {
@@ -934,8 +934,6 @@
       document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
       document.getElementById('grandQuantity').textContent = grandQuantity;
     }
-
-    // --- Submission and Validation ---
 
     async function submitOrder(event) {
         event.preventDefault();
@@ -960,8 +958,12 @@
         activeRows.forEach(rowId => {
             const category = document.querySelector(`#${rowId} select`).value;
             const size = document.getElementById(`${rowId}-size`).value;
-            if (category && size && data[category]?.[size]) {
-                const product = { category, size, unitPrice: data[category][size].price, flavors: [], productTotal: 0 };
+            
+            // CHANGE #9: Access products via `data.products`
+            const productItem = data.products[category]?.find(item => item.sizeName === size);
+
+            if (category && size && productItem) {
+                const product = { category, size, unitPrice: productItem.price, flavors: [], productTotal: 0 };
                 document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`).forEach(row => {
                     const flavor = row.querySelector('.flavor-select').value;
                     const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
@@ -994,161 +996,161 @@
             alert('Error submitting order. Please try again.'); 
         }
     }
-    
-    function validateForm() {
-        const errors = [];
-        const customerName = document.getElementById('customerName').value.trim();
-        if (!customerName) errors.push('Customer name is required');
-        else if (!allCustomers.some(c => c.name === customerName)) errors.push('Please select a valid customer from the dropdown list');
         
-        if (!document.getElementById('orderDate').value) errors.push('Order date is required');
-        
-        if (activeRows.size === 0) {
-            errors.push('At least one product must be added. Select a customer to load products.');
-        } else if (Object.keys(data).length === 0) {
-             errors.push('No products are available for this customer. Cannot create an order.');
-        }
-
-        let hasValidProducts = false;
-        activeRows.forEach((rowId, index) => {
-            const category = document.querySelector(`#${rowId} select`)?.value;
-            const size = document.getElementById(`${rowId}-size`)?.value;
-            if (!category) errors.push(`Product ${index + 1}: Category must be selected`);
-            if (!size) errors.push(`Product ${index + 1}: Size must be selected`);
+        function validateForm() {
+            const errors = [];
+            const customerName = document.getElementById('customerName').value.trim();
+            if (!customerName) errors.push('Customer name is required');
+            else if (!allCustomers.some(c => c.name === customerName)) errors.push('Please select a valid customer from the dropdown list');
             
-            const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
-            if (flavorRows.length === 0) {
-                errors.push(`Product ${index + 1}: At least one flavor must be added`);
-            } else {
-                let hasValidFlavorInProduct = false;
-                flavorRows.forEach((row, fIndex) => {
-                    if (!row.querySelector('.flavor-select').value) errors.push(`Product ${index + 1}, Flavor ${fIndex + 1}: Flavor must be selected`);
-                    if (parseInt(row.querySelector('.quantity-input').value) <= 0) errors.push(`Product ${index + 1}, Flavor ${fIndex + 1}: Quantity must be greater than 0`);
-                    if(row.querySelector('.flavor-select').value && parseInt(row.querySelector('.quantity-input').value) > 0) hasValidFlavorInProduct = true;
-                });
-                if(hasValidFlavorInProduct) hasValidProducts = true;
+            if (!document.getElementById('orderDate').value) errors.push('Order date is required');
+            
+            if (activeRows.size === 0) {
+                errors.push('At least one product must be added. Select a customer to load products.');
+            } else if (Object.keys(data).length === 0) {
+                errors.push('No products are available for this customer. Cannot create an order.');
             }
-        });
-        
-        if (!hasValidProducts && activeRows.size > 0) {
-            errors.push('At least one complete product (with category, size, flavor, and quantity > 0) is required');
+
+            let hasValidProducts = false;
+            activeRows.forEach((rowId, index) => {
+                const category = document.querySelector(`#${rowId} select`)?.value;
+                const size = document.getElementById(`${rowId}-size`)?.value;
+                if (!category) errors.push(`Product ${index + 1}: Category must be selected`);
+                if (!size) errors.push(`Product ${index + 1}: Size must be selected`);
+                
+                const flavorRows = document.querySelectorAll(`#${rowId}-flavors-list .flavor-row`);
+                if (flavorRows.length === 0) {
+                    errors.push(`Product ${index + 1}: At least one flavor must be added`);
+                } else {
+                    let hasValidFlavorInProduct = false;
+                    flavorRows.forEach((row, fIndex) => {
+                        if (!row.querySelector('.flavor-select').value) errors.push(`Product ${index + 1}, Flavor ${fIndex + 1}: Flavor must be selected`);
+                        if (parseInt(row.querySelector('.quantity-input').value) <= 0) errors.push(`Product ${index + 1}, Flavor ${fIndex + 1}: Quantity must be greater than 0`);
+                        if(row.querySelector('.flavor-select').value && parseInt(row.querySelector('.quantity-input').value) > 0) hasValidFlavorInProduct = true;
+                    });
+                    if(hasValidFlavorInProduct) hasValidProducts = true;
+                }
+            });
+            
+            if (!hasValidProducts && activeRows.size > 0) {
+                errors.push('At least one complete product (with category, size, flavor, and quantity > 0) is required');
+            }
+            
+            return showValidationErrors(errors);
         }
         
-        return showValidationErrors(errors);
-    }
-    
-    // --- UI Helpers & Event Listeners ---
-    
-    function setupEventListeners() {
-        const customerInput = document.getElementById('customerName');
-        const dropdown = document.getElementById('customerDropdownList');
-
-        customerInput.addEventListener('input', e => {
-            filterCustomers(e.target.value.trim());
-            displayCustomerDropdown();
-            if (!allCustomers.some(c => c.name === e.target.value.trim())) {
-                showCustomerWarning(true);
-            } else {
-                showCustomerWarning(false);
-            }
-        });
-        customerInput.addEventListener('focus', e => { if (e.target.value) { filterCustomers(e.target.value.trim()); displayCustomerDropdown(); } });
-        customerInput.addEventListener('blur', () => setTimeout(() => dropdown.style.display = 'none', 150));
+        // --- UI Helpers & Event Listeners ---
         
-        dropdown.addEventListener('mousedown', e => e.preventDefault()); // Prevent blur on click
-        dropdown.addEventListener('click', e => {
-            if (e.target.classList.contains('dropdown-item')) {
-                const customerName = e.target.dataset.value;
-                customerInput.value = customerName;
+        function setupEventListeners() {
+            const customerInput = document.getElementById('customerName');
+            const dropdown = document.getElementById('customerDropdownList');
+
+            customerInput.addEventListener('input', e => {
+                filterCustomers(e.target.value.trim());
+                displayCustomerDropdown();
+                if (!allCustomers.some(c => c.name === e.target.value.trim())) {
+                    showCustomerWarning(true);
+                } else {
+                    showCustomerWarning(false);
+                }
+            });
+            customerInput.addEventListener('focus', e => { if (e.target.value) { filterCustomers(e.target.value.trim()); displayCustomerDropdown(); } });
+            customerInput.addEventListener('blur', () => setTimeout(() => dropdown.style.display = 'none', 150));
+            
+            dropdown.addEventListener('mousedown', e => e.preventDefault()); // Prevent blur on click
+            dropdown.addEventListener('click', e => {
+                if (e.target.classList.contains('dropdown-item')) {
+                    const customerName = e.target.dataset.value;
+                    customerInput.value = customerName;
+                    dropdown.style.display = 'none';
+                    onCustomerSelect(customerName);
+                }
+            });
+
+            customerInput.addEventListener('keydown', handleDropdownKeys);
+            document.getElementById('customerDropdownList').addEventListener('mouseenter', e => e.currentTarget.querySelector('.active')?.classList.remove('active'));
+        }
+        
+        function filterCustomers(searchTerm) {
+        if (!searchTerm) { filteredCustomers = []; return; }
+        const term = searchTerm.toLowerCase();
+        filteredCustomers = allCustomers.filter(customer => customer.name.toLowerCase().includes(term)).slice(0, 50);
+        }
+
+        function displayCustomerDropdown() {
+        const dropdown = document.getElementById('customerDropdownList');
+        const input = document.getElementById('customerName');
+        if (filteredCustomers.length === 0 && input.value) { dropdown.innerHTML = '<div class="no-results">No customers found</div>'; }
+        else { dropdown.innerHTML = filteredCustomers.map(c => `<div class="dropdown-item" data-value="${c.name}">${c.name}</div>`).join(''); }
+        dropdown.style.display = input.value && filteredCustomers.length > 0 ? 'block' : 'none';
+        }
+
+        function handleDropdownKeys(e) {
+            const dropdown = document.getElementById('customerDropdownList');
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            if (items.length === 0 || dropdown.style.display === 'none') return;
+            let activeItem = dropdown.querySelector('.active');
+            let activeIndex = activeItem ? [...items].indexOf(activeItem) : -1;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = (activeIndex + 1) % items.length;
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = (activeIndex - 1 + items.length) % items.length;
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeItem) { activeItem.click(); }
+                return;
+            } else if (e.key === 'Escape') {
                 dropdown.style.display = 'none';
-                onCustomerSelect(customerName);
-            }
-        });
-
-        customerInput.addEventListener('keydown', handleDropdownKeys);
-        document.getElementById('customerDropdownList').addEventListener('mouseenter', e => e.currentTarget.querySelector('.active')?.classList.remove('active'));
-    }
-    
-    function filterCustomers(searchTerm) {
-      if (!searchTerm) { filteredCustomers = []; return; }
-      const term = searchTerm.toLowerCase();
-      filteredCustomers = allCustomers.filter(customer => customer.name.toLowerCase().includes(term)).slice(0, 50);
-    }
-
-    function displayCustomerDropdown() {
-      const dropdown = document.getElementById('customerDropdownList');
-      const input = document.getElementById('customerName');
-      if (filteredCustomers.length === 0 && input.value) { dropdown.innerHTML = '<div class="no-results">No customers found</div>'; }
-      else { dropdown.innerHTML = filteredCustomers.map(c => `<div class="dropdown-item" data-value="${c.name}">${c.name}</div>`).join(''); }
-      dropdown.style.display = input.value && filteredCustomers.length > 0 ? 'block' : 'none';
-    }
-
-    function handleDropdownKeys(e) {
-        const dropdown = document.getElementById('customerDropdownList');
-        const items = dropdown.querySelectorAll('.dropdown-item');
-        if (items.length === 0 || dropdown.style.display === 'none') return;
-        let activeItem = dropdown.querySelector('.active');
-        let activeIndex = activeItem ? [...items].indexOf(activeItem) : -1;
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            activeIndex = (activeIndex + 1) % items.length;
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            activeIndex = (activeIndex - 1 + items.length) % items.length;
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (activeItem) { activeItem.click(); }
-            return;
-        } else if (e.key === 'Escape') {
-            dropdown.style.display = 'none';
-            return;
-        } else { return; }
-        
-        activeItem?.classList.remove('active');
-        items[activeIndex].classList.add('active');
-        items[activeIndex].scrollIntoView({ block: 'nearest' });
-    }
-
-    function showLoadingOverlay(text) {
-      const overlay = document.getElementById('loadingOverlay');
-      overlay.querySelector('.loading-text').textContent = text;
-      overlay.style.display = 'flex';
-    }
-    function hideLoadingOverlay() { document.getElementById('loadingOverlay').style.display = 'none'; }
-    function updateCustomerStatus(message, type) {
-      const el = document.getElementById('customerStatus');
-      el.textContent = message;
-      el.style.color = type === 'error' ? '#c62828' : type === 'success' ? '#2e7d32' : '#666';
-    }
-    function showCustomerWarning(show) { document.getElementById('customerWarning').style.display = show ? 'block' : 'none'; }
-    function displaySelectedCustomerAddress(address) {
-        const el = document.getElementById('selectedCustomerAddress');
-        el.textContent = address ? `Address: ${address}` : 'Address: Not available';
-        el.style.display = 'block';
-    }
-    function setDefaultOrderDate() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      document.getElementById('orderDate').value = tomorrow.toISOString().split('T')[0];
-    }
-    function showValidationErrors(errors) {
-        const errorDiv = document.getElementById('validationErrors');
-        if (errors.length > 0) {
-            errorDiv.innerHTML = `<div style="background-color:#ffebee;border:1px solid #f44336;border-radius:4px;padding:15px;margin:15px 0;color:#c62828;"><strong>⚠️ Please fix the following issues:</strong><ul style="margin:10px 0 0 20px;">${errors.map(e => `<li>${e}</li>`).join('')}</ul></div>`;
-            errorDiv.style.display = 'block';
-            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return false;
+                return;
+            } else { return; }
+            
+            activeItem?.classList.remove('active');
+            items[activeIndex].classList.add('active');
+            items[activeIndex].scrollIntoView({ block: 'nearest' });
         }
-        errorDiv.style.display = 'none';
-        return true;
-    }
-    function highlightIncompleteFields() { /* For brevity, this function is kept simple */ }
-    function clearValidationErrors() { document.getElementById('validationErrors').style.display = 'none'; }
-    function updateDeleteButtons() { document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = activeRows.size > 1 ? 'flex' : 'none'); }
-    function updateRemoveFlavorButtons(rowId) { document.querySelectorAll(`#${rowId}-flavors-list .remove-flavor-btn`).forEach((btn, i, arr) => btn.style.display = arr.length > 1 ? 'block' : 'none'); }
-    function incrementQuantity(id) { const i=document.getElementById(id).querySelector('.quantity-input'); i.value=parseInt(i.value||0)+1; updateTotal(); }
-    function decrementQuantity(id) { const i=document.getElementById(id).querySelector('.quantity-input'); if(i.value>1)i.value=parseInt(i.value)-1; updateTotal(); }
-  </script>
-</body>
-</html>
+
+        function showLoadingOverlay(text) {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.querySelector('.loading-text').textContent = text;
+        overlay.style.display = 'flex';
+        }
+        function hideLoadingOverlay() { document.getElementById('loadingOverlay').style.display = 'none'; }
+        function updateCustomerStatus(message, type) {
+        const el = document.getElementById('customerStatus');
+        el.textContent = message;
+        el.style.color = type === 'error' ? '#c62828' : type === 'success' ? '#2e7d32' : '#666';
+        }
+        function showCustomerWarning(show) { document.getElementById('customerWarning').style.display = show ? 'block' : 'none'; }
+        function displaySelectedCustomerAddress(address) {
+            const el = document.getElementById('selectedCustomerAddress');
+            el.textContent = address ? `Address: ${address}` : 'Address: Not available';
+            el.style.display = 'block';
+        }
+        function setDefaultOrderDate() {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('orderDate').value = tomorrow.toISOString().split('T')[0];
+        }
+        function showValidationErrors(errors) {
+            const errorDiv = document.getElementById('validationErrors');
+            if (errors.length > 0) {
+                errorDiv.innerHTML = `<div style="background-color:#ffebee;border:1px solid #f44336;border-radius:4px;padding:15px;margin:15px 0;color:#c62828;"><strong>⚠️ Please fix the following issues:</strong><ul style="margin:10px 0 0 20px;">${errors.map(e => `<li>${e}</li>`).join('')}</ul></div>`;
+                errorDiv.style.display = 'block';
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+            errorDiv.style.display = 'none';
+            return true;
+        }
+        function highlightIncompleteFields() { /* For brevity, this function is kept simple */ }
+        function clearValidationErrors() { document.getElementById('validationErrors').style.display = 'none'; }
+        function updateDeleteButtons() { document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = activeRows.size > 1 ? 'flex' : 'none'); }
+        function updateRemoveFlavorButtons(rowId) { document.querySelectorAll(`#${rowId}-flavors-list .remove-flavor-btn`).forEach((btn, i, arr) => btn.style.display = arr.length > 1 ? 'block' : 'none'); }
+        function incrementQuantity(id) { const i=document.getElementById(id).querySelector('.quantity-input'); i.value=parseInt(i.value||0)+1; updateTotal(); }
+        function decrementQuantity(id) { const i=document.getElementById(id).querySelector('.quantity-input'); if(i.value>1)i.value=parseInt(i.value)-1; updateTotal(); }
+    </script>
+    </body>
+    </html>
